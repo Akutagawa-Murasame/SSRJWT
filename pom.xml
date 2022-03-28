@@ -100,6 +100,12 @@
             <artifactId>java-jwt</artifactId>
             <version>3.19.0</version>
         </dependency>
+
+<!--        主要用于打印日志-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
