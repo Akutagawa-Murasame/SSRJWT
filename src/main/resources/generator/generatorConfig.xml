@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
+            <!--        大小写敏感-->
+            <property name="caseSensitive" value="true"/>
+        </plugin>
+
+        <commentGenerator>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql:///ssrjwt?useSSL=false&amp;characterEncoding=UTF-8&amp;serverTimezone=Asia/Shanghai"
+                        userId="test"
+                        password="test">
+<!--            防止生成字段不全-->
+            <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+
+        <!--        java的pojo类-->
+        <javaModelGenerator targetPackage="org.mura.model.entity" targetProject="src/main/java"/>
+
+        <!--        mapper的xml文件-->
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
+
+        <!--        mapper的接口文件-->
+        <javaClientGenerator targetPackage="org.mura.mapper" targetProject="src/main/java"
+                             type="XMLMAPPER"/>
+
+        <table tableName="user">
+            <!--            自动生成主键-->
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table tableName="role">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table tableName="permission">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table tableName="user_role">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table tableName="role_permission">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+    </context>
+</generatorConfiguration>
