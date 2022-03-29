@@ -2,6 +2,7 @@ package org.mura.model;
 
 import org.mura.model.entity.User;
 
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -10,6 +11,7 @@ import java.io.Serializable;
  *
  * 用户
  */
+@Table(name = "user")
 public class UserDto extends User implements Serializable {
     private static final long serialVersionUID = 7081350470429029815L;
 }

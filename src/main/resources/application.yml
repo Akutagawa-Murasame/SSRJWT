@@ -1,3 +1,24 @@
 spring:
   profiles:
     active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///ssrjwt?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: test
+    password: test
+server:
+  port:
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: org.mura.model.entity
+
+pagehelper:
+  params: count=countsql
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+
+mapper:
+  not-empty: true
