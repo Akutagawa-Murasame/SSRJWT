@@ -18,9 +18,6 @@ public interface IBaseService<T> {
      *
      * @param record 实体
      * @return java.util.List<T>
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     List<T> select(T record);
 
@@ -29,9 +26,6 @@ public interface IBaseService<T> {
      *
      * @param key 主键
      * @return T
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     T selectByPrimaryKey(Object key);
 
@@ -39,9 +33,6 @@ public interface IBaseService<T> {
      * 查询全部结果，select(null)方法能达到同样的效果
      *
      * @return java.util.List<T>
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     List<T> selectAll();
 
@@ -50,9 +41,6 @@ public interface IBaseService<T> {
      *
      * @param record 实体
      * @return 唯一结果
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     T selectOne(T record);
 
@@ -61,9 +49,6 @@ public interface IBaseService<T> {
      *
      * @param record 实体
      * @return 满足条件的字段总数
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     int selectCount(T record);
 
@@ -73,9 +58,6 @@ public interface IBaseService<T> {
      *
      * @param record 实体
      * @return 成功插入的记录个数
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     int insert(T record);
 
@@ -84,9 +66,6 @@ public interface IBaseService<T> {
      *
      * @param record 实体
      * @return 成功插入的记录个数
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     int insertSelective(T record);
 
@@ -96,9 +75,6 @@ public interface IBaseService<T> {
      *
      * @param record 唯一实体，因为主键是唯一的
      * @return 成功为1，失败为0
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     int updateByPrimaryKey(T record);
 
@@ -107,9 +83,6 @@ public interface IBaseService<T> {
      *
      * @param record 唯一实体
      * @return 成功为1，失败为0
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     int updateByPrimaryKeySelective(T record);
 
@@ -119,9 +92,6 @@ public interface IBaseService<T> {
      *
      * @param record 实体
      * @return 成功删除的个数
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     int delete(T record);
 
@@ -130,79 +100,65 @@ public interface IBaseService<T> {
      *
      * @param key 主键
      * @return 成功为1，失败为0
-     *
-     * @author Akutagawa Murasame
-     * @date 2022/3/28 22:26
      */
     int deleteByPrimaryKey(Object key);
 
     // Example
     /**
-     * TODO：根据Example条件进行查询，这个查询支持通过Example类指定查询列，通过selectProperties方法指定查询列
-     * @param example
+     * 根据Example条件进行查询，这个查询支持通过Example类指定查询列，通过selectProperties方法指定查询列
+     *
+     * @param example 查询的条件
      * @return java.util.List<T>
-     * @author Wang926454
-     * @date 2018/8/9 15:44
      */
     List<T> selectByExample(Object example);
 
     /**
-     * TODO：根据Example条件进行查询总数
-     * @param example
-     * @return int
-     * @author Wang926454
-     * @date 2018/8/9 15:44
+     * 根据Example条件进行查询总数
+     *
+     * @param example 查询条件
+     * @return 结果的数量
      */
     int selectCountByExample(Object example);
 
     /**
-     * TODO：根据Example条件更新实体record包含的全部属性，null值会被更新
-     * @param record
-     * @param example
-     * @return int
-     * @author Wang926454
-     * @date 2018/8/9 15:44
+     * 根据Example条件更新实体record包含的全部属性，null值会被更新
+     *
+     * @param record 待更新的实体记录
+     * @param example 更新条件
+     * @return 更改的数量
      */
     int updateByExample(@Param("record") T record, @Param("example") Object example);
 
     /**
-     * TODO：根据Example条件更新实体record包含的不是null的属性值
-     * @param record
-     * @param example
-     * @return int
-     * @author Wang926454
-     * @date 2018/8/9 15:44
+     * 根据Example条件更新实体record包含的不是null的属性值
+     *
+     * @param record 实体记录
+     * @param example 更新条件
+     * @return 更新的记录数量
      */
     int updateByExampleSelective(@Param("record") T record, @Param("example") Object example);
 
     /**
-     * TODO：根据Example条件删除数据
-     * @param example
-     * @return int
-     * @author Wang926454
-     * @date 2018/8/9 15:44
+     * 根据Example条件删除数据
+     * @param example 删除条件
+     * @return 删除的数量
      */
     int deleteByExample(Object example);
 
     // RowBounds
     /**
-     * TODO：根据实体属性和RowBounds进行分页查询
-     * @param record
-     * @param rowBounds
+     * 根据实体属性和RowBounds进行分页查询
+     * @param record 查询实体
+     * @param rowBounds 页数
      * @return java.util.List<T>
-     * @author Wang926454
-     * @date 2018/8/9 15:44
      */
     List<T> selectByRowBounds(T record, RowBounds rowBounds);
 
     /**
-     * TODO：根据example条件和RowBounds进行分页查询
-     * @param example
-     * @param rowBounds
+     * 根据example条件和RowBounds进行分页查询
+     * @param example 查询条件
+     * @param rowBounds 页数
      * @return java.util.List<T>
-     *
-     * @author Wang926454
-     * @date 2018/8/9 15:44
      */
     List<T> selectByExampleAndRowBounds(Object example, RowBounds rowBounds);
 }

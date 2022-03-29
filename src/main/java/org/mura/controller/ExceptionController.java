@@ -31,7 +31,7 @@ public class ExceptionController {
     }
 
     /**
-     * 捕捉UnauthorizedException
+     * 捕捉自定义的UnauthorizedException
      *
      * @return 响应状态bean
      */
