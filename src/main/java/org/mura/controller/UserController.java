@@ -68,10 +68,14 @@ public class UserController {
 
     /**
      * 增加用户
+     *
+     * 在上传文件的时候，spring框架会自动装配文件类型, 使用@RequestBody接收对象，
+     * 所对应的content-type :application/json。所以当使用@RequestBody和文件上传的时候，会报错
+     * 所以可以删掉这个注解，或者前端调用接口带上Content-type:application/json，或者使用RequestParam注解
      */
     @PostMapping("/user")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> add(@RequestBody UserDto userDto){
+    public Map<String,Object> add(UserDto userDto){
         userDto.setRegTime(new Date());
 
         int count = userService.insert(userDto);
@@ -90,7 +94,7 @@ public class UserController {
      */
     @PutMapping("/user")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> update(@RequestBody UserDto userDto){
+    public Map<String,Object> update(UserDto userDto){
         int count = userService.updateByPrimaryKeySelective(userDto);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -122,7 +126,7 @@ public class UserController {
      * 登录授权
      */
     @PostMapping("/user/login")
-    public ResponseBean login(@RequestBody UserDto userDto) {
+    public ResponseBean login(UserDto userDto) {
         UserDto userDtoTemp = new UserDto();
 
         userDtoTemp.setAccount(userDto.getAccount());

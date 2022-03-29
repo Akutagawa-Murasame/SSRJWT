@@ -6,6 +6,7 @@ spring:
     url: jdbc:mysql:///ssrjwt?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: test
     password: test
+    type: com.alibaba.druid.pool.DruidDataSource
 server:
   port:
 
