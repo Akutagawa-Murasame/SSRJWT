@@ -2,11 +2,13 @@ package org.mura.config.shiro;
 
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
@@ -17,6 +19,7 @@ import java.util.Map;
  * @author Akutagawa Murasame
  * @date 2022/3/29 22:03
  */
+@Configuration
 public class ShiroConfig {
     /**
      * 创造一个SecurityManager，这个manager使用自定义的realm，并且不使用shiro自带的session
@@ -86,15 +89,10 @@ public class ShiroConfig {
         return defaultAdvisorAutoProxyCreator;
     }
 
-    /**
-     * 配置shiro，不需要配置生命周期处理器，shiro框架整合spring时，这个事情不会交给使用者去做，
-     * 自己会注入处理器。查看shiro-spring jar下面的config包里的ShiroBeanConfiguration
-     * 已经注入了。在此注入纯属多此一举
-     **/
-//    @Bean
-//    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-//        return new LifecycleBeanPostProcessor();
-//    }
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
 
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {

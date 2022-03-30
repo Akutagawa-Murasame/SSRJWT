@@ -8,7 +8,7 @@ spring:
     password: test
     type: com.alibaba.druid.pool.DruidDataSource
 server:
-  port:
+  port: 8080
 
 mybatis:
   config-location: classpath:mybatis-config.xml
