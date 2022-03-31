@@ -51,7 +51,7 @@ public class UserController {
     }
 
     /**
-     * 获取指定用户，id通过restful风格传输
+     * 获取指定用户
      */
     @GetMapping("/user/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})

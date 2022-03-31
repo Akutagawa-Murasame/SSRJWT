@@ -27,7 +27,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ShiroException.class)
     public ResponseBean handle401(ShiroException e) {
-        return new ResponseBean(401, e.getMessage(), null);
+        return new ResponseBean(401, "shiro exception" + e.getMessage(), null);
     }
 
     /**
@@ -38,7 +38,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseBean handle401() {
-        return new ResponseBean(401, "Unauthorized", null);
+        return new ResponseBean(401, "Unauthorized(no permission)", null);
     }
 
     /**
@@ -52,7 +52,7 @@ public class ExceptionController {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseBean globalException(HttpServletRequest request, Throwable ex) {
-        return new ResponseBean(this.getStatus(request).value(), ex.getMessage(), null);
+        return new ResponseBean(this.getStatus(request).value(), "unknown exception" + ex.getMessage(), null);
     }
 
     /**

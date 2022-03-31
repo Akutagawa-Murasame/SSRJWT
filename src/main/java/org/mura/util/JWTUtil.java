@@ -6,7 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 /**
@@ -23,20 +22,21 @@ public class JWTUtil {
      * 校验token是否正确
      *
      * @param token  令牌
-     * @param username 用户名
      * @param secret 秘钥(这里秘钥都是取密码加Redis中保留的随机UUID)
      * @return 是否正确
+     *
+     * claim是jwt中的附加声明，即使不验证也没事，如果使用了withClaim就需要验证
      */
-    public static boolean verify(String token, String username, String secret) {
-//        这个token使用密钥和用户名生成
+    public static boolean verify(String token, String secret) {
+//        这个token使用密钥生成，不需要账户用户名，只需要私钥和token即可登录
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withClaim("username", username)
                     .build();
 
 //            验证失败会报错，过期也会报错
             DecodedJWT jwt = verifier.verify(token);
+
             return true;
         } catch (Exception e) {
             return false;
@@ -48,12 +48,13 @@ public class JWTUtil {
      * token中规定了多少位是密钥，多少位是claim
      *
      * @param token 令牌
-     * @return token中包含的用户名
+     * @return token中包含的账号
      */
-    public static String getUsername(String token) {
+    public static String getAccount(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
-            return jwt.getClaim("username").asString();
+
+            return jwt.getClaim("account").asString();
         } catch (JWTDecodeException e) {
             return null;
         }
@@ -62,17 +63,17 @@ public class JWTUtil {
     /**
      * 生成签名, EXPIRE_TIME后过期
      *
-     * @param username 用户名
+     * @param account 账号
      * @param secret   用户的密码
      * @return 加密的token
      */
-    public static String sign(String username, String secret) {
+    public static String sign(String account, String secret) {
         Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
 
         Algorithm algorithm = Algorithm.HMAC256(secret);
-        // 附带username信息
+        // 附带account信息
         return JWT.create()
-                .withClaim("username", username)
+                .withClaim("account", account)
                 .withExpiresAt(date)
                 .sign(algorithm);
     }

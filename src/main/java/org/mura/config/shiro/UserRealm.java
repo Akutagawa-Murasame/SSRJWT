@@ -57,7 +57,7 @@ public class UserRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         UserDto userDto = new UserDto();
 
-        userDto.setAccount(JWTUtil.getUsername(principals.toString()));
+        userDto.setAccount(JWTUtil.getAccount(principals.toString()));
 
         // 查询用户角色
         List<RoleDto> roleDtos = roleMapper.findRoleByUser(userDto);
@@ -75,29 +75,30 @@ public class UserRealm extends AuthorizingRealm {
     }
 
     /**
-     * 默认使用此方法进行用户名正确与否验证，错误抛出异常即可。
+     * 默认使用此方法进行账户正确与否验证，错误抛出异常即可。
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
 //        获得密钥，调用的是我们自定义的JWTToken中的方法
         String token = (String) auth.getCredentials();
 
-//        解密获得username，用于和数据库对比
-        String username = JWTUtil.getUsername(token);
-        if (null == username) {
-            throw new AuthenticationException("token invalid");
+//        解密获得account，用于和数据库对比
+        String account = JWTUtil.getAccount(token);
+
+        if (null == account) {
+            throw new AuthenticationException("token account is null");
         }
 
         // 查询用户是否存在
         UserDto userDto = new UserDto();
-        userDto.setAccount(username);
+        userDto.setAccount(account);
         userDto = userMapper.selectOne(userDto);
 
         if (null == userDto) {
             throw new AuthenticationException("User didn't exists");
         }
 
-        if (!JWTUtil.verify(token, username, userDto.getPassword())) {
+        if (!JWTUtil.verify(token, userDto.getPassword())) {
             throw new AuthenticationException("Username or password error");
         }
 
