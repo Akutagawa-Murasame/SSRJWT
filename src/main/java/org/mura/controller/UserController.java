@@ -12,7 +12,6 @@ import org.mura.service.IUserService;
 import org.mura.util.EncryptAESUtil;
 import org.mura.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -25,6 +24,7 @@ import java.util.Map;
  * @date 2022/3/28 23:26
  */
 @RestController
+@RequestMapping("/user")
 public class UserController {
     private final IUserService userService;
 
@@ -37,8 +37,10 @@ public class UserController {
      * 获取所有用户
      * <p>
      * Logical.AND，代表权限列表中的所有权限都要满足
+     *
+     * GetMapping == GetMapping("") ==> GetMapping("/")
      */
-    @GetMapping("/user")
+    @GetMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
     public Map<String, Object> user() {
         List<UserDto> userDtos = userService.selectAll();
@@ -54,7 +56,7 @@ public class UserController {
     /**
      * 获取指定用户
      */
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
     public Map<String, Object> findById(@PathVariable("id") Integer id) {
         UserDto userDto = userService.selectByPrimaryKey(id);
@@ -76,13 +78,13 @@ public class UserController {
      * <p>
      * 现在新增user但是没有新增权限
      */
-    @PostMapping("/user")
+    @PostMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
     public Map<String, Object> add(UserDto userDto) {
         userDto.setRegTime(new Date());
 
 //        密码以帐号 + 密码的形式进行AES加密
-        String key = EncryptAESUtil.Encryptor(userDto.getAccount() + userDto.getPassword());
+        String key = EncryptAESUtil.encrypt(userDto.getAccount() + userDto.getPassword());
         userDto.setPassword(key);
 
         int count = userService.insert(userDto);
@@ -99,11 +101,11 @@ public class UserController {
     /**
      * 更新用户
      */
-    @PutMapping("/user")
+    @PutMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
     public Map<String, Object> update(UserDto userDto) {
 //        密码以帐号+密码的形式进行AES加密
-        String key = EncryptAESUtil.Encryptor(userDto.getAccount() + userDto.getPassword());
+        String key = EncryptAESUtil.encrypt(userDto.getAccount() + userDto.getPassword());
         userDto.setPassword(key);
 
         int count = userService.updateByPrimaryKeySelective(userDto);
@@ -120,7 +122,7 @@ public class UserController {
     /**
      * 删除用户
      */
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
     public Map<String, Object> delete(@PathVariable("id") Integer id) {
         int count = userService.deleteByPrimaryKey(id);
@@ -136,7 +138,7 @@ public class UserController {
     /**
      * 登录授权
      */
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public ResponseBean login(UserDto userDto) {
         UserDto userDtoTemp = new UserDto();
 
@@ -144,22 +146,21 @@ public class UserController {
         userDtoTemp = userService.selectOne(userDtoTemp);
 
         // 进行AES解密
-        String key = EncryptAESUtil.Decryptor(userDtoTemp.getPassword());
+        String key = EncryptAESUtil.decrypt(userDtoTemp.getPassword());
 
 //        对比，因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
-        assert key != null;
         if (key.equals(userDto.getAccount() + userDto.getPassword())) {
 //            ResponseBean中携带了token
             return new ResponseBean(200, "Login success", JWTUtil.sign(userDto.getAccount(), userDto.getPassword()));
         } else {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException("username or password error");
         }
     }
 
     /**
      * 测试登录
      */
-    @GetMapping("/user/article")
+    @GetMapping("/article")
     public ResponseBean article() {
         Subject subject = SecurityUtils.getSubject();
         // 登录了返回true
@@ -175,18 +176,9 @@ public class UserController {
      * <p>
      * 没登陆会报错
      */
-    @GetMapping("/user/article2")
+    @GetMapping("/article2")
     @RequiresAuthentication
     public ResponseBean requireAuth() {
         return new ResponseBean(200, "You are already logged in", null);
-    }
-
-    /**
-     * 401没有权限异常
-     */
-    @RequestMapping(path = "/401")
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseBean unauthorized() {
-        return new ResponseBean(401, "Unauthorized", null);
     }
 }

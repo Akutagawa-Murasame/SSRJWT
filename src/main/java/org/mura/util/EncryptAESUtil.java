@@ -2,6 +2,7 @@ package org.mura.util;
 
 import com.sun.crypto.provider.SunJCE;
 import lombok.extern.slf4j.Slf4j;
+import org.mura.exception.UnauthorizedException;
 
 import javax.crypto.*;
 import java.io.UnsupportedEncodingException;
@@ -44,7 +45,7 @@ public class EncryptAESUtil {
     /**
      * 加密
      */
-    public static String Encryptor(String str) {
+    public static String encrypt(String str) {
         try{
             SecretKey desKey = generateSecretKey();
 
@@ -67,14 +68,14 @@ public class EncryptAESUtil {
                 UnsupportedEncodingException e){
             log.error(e.getMessage());
 
-            return null;
+            throw new UnauthorizedException("encrypt exception\n" + e.getMessage());
         }
     }
 
     /**
      * 解密
      */
-    public static String Decryptor(String str) {
+    public static String decrypt(String str) {
         try{
             SecretKey desKey = generateSecretKey();
 
@@ -98,7 +99,7 @@ public class EncryptAESUtil {
                 NoSuchPaddingException e){
             log.error(e.getMessage());
 
-            return null;
+            throw new UnauthorizedException("decrypt exception\n" + e.getMessage());
         }
     }
 }

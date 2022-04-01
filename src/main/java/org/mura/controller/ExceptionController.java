@@ -1,6 +1,7 @@
 package org.mura.controller;
 
 import org.apache.shiro.ShiroException;
+import org.mura.exception.CustomException;
 import org.mura.exception.UnauthorizedException;
 import org.mura.model.common.ResponseBean;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ShiroException.class)
     public ResponseBean handle401(ShiroException e) {
-        return new ResponseBean(401, "shiro exception" + e.getMessage(), null);
+        return new ResponseBean(401, "shiro exception(Unauthorized):" + e.getMessage(), null);
     }
 
     /**
@@ -37,22 +38,31 @@ public class ExceptionController {
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseBean handle401() {
-        return new ResponseBean(401, "Unauthorized(no permission)", null);
+    public ResponseBean handle401(UnauthorizedException e) {
+        return new ResponseBean(401, "Unauthorized(no permission):" + e.getMessage(), null);
+    }
+
+    /**
+     * 捕捉其他所有自定义异常
+     * 异常时会跳转/error，所以这里是设置request
+     *
+     * @param request 异常转发请求
+     * @param e 异常
+     * @return 响应状态bean
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CustomException.class)
+    public ResponseBean handle(HttpServletRequest request, CustomException e) {
+        return new ResponseBean(this.getStatus(request).value(), e.getMessage(), null);
     }
 
     /**
      * 捕捉其他所有异常
-     * 异常时会跳转/error，所以这里是设置request
-     *
-     * @param request 异常转发请求
-     * @param ex 异常
-     * @return 响应状态bean
      */
-    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(Exception.class)
     public ResponseBean globalException(HttpServletRequest request, Throwable ex) {
-        return new ResponseBean(this.getStatus(request).value(), "unknown exception" + ex.getMessage(), null);
+        return new ResponseBean(this.getStatus(request).value(), ex.getMessage(), null);
     }
 
     /**

@@ -75,8 +75,8 @@ DROP TABLE IF EXISTS `role_permission`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `role_permission` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `role_id` int DEFAULT NULL COMMENT '角色id',
-  `permission_id` int DEFAULT NULL COMMENT '权限id',
+  `role_id` int NOT NULL COMMENT '角色id',
+  `permission_id` int NOT NULL COMMENT '权限id',
   PRIMARY KEY (`id`),
   KEY `role_id` (`role_id`),
   KEY `permission_id` (`permission_id`),
@@ -104,11 +104,12 @@ DROP TABLE IF EXISTS `user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `account` varchar(20) DEFAULT NULL COMMENT '帐号',
-  `password` varchar(80) DEFAULT NULL COMMENT '密码',
-  `username` varchar(20) DEFAULT NULL COMMENT '昵称',
+  `account` varchar(20) NOT NULL COMMENT '帐号',
+  `password` varchar(80) NOT NULL COMMENT '密码',
+  `username` varchar(20) NOT NULL COMMENT '昵称',
   `reg_time` datetime NOT NULL COMMENT '注册时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COMMENT='用户表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -118,7 +119,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`id`, `account`, `password`, `username`, `reg_time`) VALUES (1,'admin','QUJBNUYyM0M3OTNEN0I4MUFBOTZBOTkwOEI1NDI0MUE=','admin','2022-03-31 21:48:20'),(2,'someone','MDQyMjE1NUREQzhCNUFBMzJCMDM5N0ZGNjMwRkMxQkM=','someone','2022-03-31 21:48:20'),(3,'guest','QTNCMzMwREY3MkMwQjRGQjNBQzUyOTM0NTFFMzJCNDg=','guest','2022-03-31 21:48:20');
+INSERT INTO `user` (`id`, `account`, `password`, `username`, `reg_time`) VALUES (1,'admin','QUJBNUYyM0M3OTNEN0I4MUFBOTZBOTkwOEI1NDI0MUE=','admin','2022-04-01 14:21:52'),(2,'someone','MDQyMjE1NUREQzhCNUFBMzJCMDM5N0ZGNjMwRkMxQkM=','someone','2022-04-01 14:21:53'),(3,'guest','QTNCMzMwREY3MkMwQjRGQjNBQzUyOTM0NTFFMzJCNDg=','guest','2022-04-01 14:21:53');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,8 +132,8 @@ DROP TABLE IF EXISTS `user_role`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_role` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `user_id` int DEFAULT NULL COMMENT '用户id',
-  `role_id` int DEFAULT NULL COMMENT '角色id',
+  `user_id` int NOT NULL COMMENT '用户id',
+  `role_id` int NOT NULL COMMENT '角色id',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `role_id` (`role_id`),
@@ -160,4 +161,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-01  9:05:12
+-- Dump completed on 2022-04-01 14:24:30

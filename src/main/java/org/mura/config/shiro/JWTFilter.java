@@ -5,6 +5,7 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +34,15 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             try {
                 executeLogin(request, response);
             } catch (Exception e) {
-                response401(request, response);
+//                出现异常跳转到/401，传递错误信息msg
+                Throwable throwable = e.getCause();
+                String msg = e.getMessage();
+
+                if (throwable != null) {
+                    msg = throwable.getMessage();
+                }
+
+                this.response401(request, response, msg);
             }
         }
 
@@ -93,11 +102,15 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     /**
      * 将非法请求跳转到 /401
      */
-    private void response401(ServletRequest req, ServletResponse resp) {
+    private void response401(ServletRequest req, ServletResponse resp, String msg) {
         try {
+            HttpServletRequest httpServletRequest = (HttpServletRequest) req;
             HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
-            httpServletResponse.sendRedirect("/401");
-        } catch (IOException e) {
+
+            req.setAttribute("msg", msg);
+
+            httpServletRequest.getRequestDispatcher("/401").forward(httpServletRequest, httpServletResponse);
+        } catch (IOException | ServletException e) {
             log.error(e.getMessage());
         }
     }

@@ -100,10 +100,9 @@ public class UserRealm extends AuthorizingRealm {
         }
 
 //        AES对称解密
-        String key = EncryptAESUtil.Decryptor(userDto.getPassword());
+        String key = EncryptAESUtil.decrypt(userDto.getPassword());
 
 //        获取的密码是account+password，所以还需要进行字符串截断
-        assert key != null;
         if (!JWTUtil.verify(token, key.substring(account.length()))) {
             throw new AuthenticationException("Username or password error");
         }

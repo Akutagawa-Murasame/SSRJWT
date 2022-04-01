@@ -7,6 +7,8 @@ package org.mura.exception;
  * 用户未授权异常
  */
 public class UnauthorizedException extends RuntimeException {
+    private static final long serialVersionUID = 7235159671799647426L;
+
     public UnauthorizedException() {
         super();
     }
