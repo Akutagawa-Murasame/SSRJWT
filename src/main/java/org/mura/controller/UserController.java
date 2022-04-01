@@ -5,6 +5,7 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.mura.exception.CustomException;
 import org.mura.exception.UnauthorizedException;
 import org.mura.model.UserDto;
 import org.mura.model.common.ResponseBean;
@@ -15,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Akutagawa Murasame
@@ -37,20 +36,19 @@ public class UserController {
      * 获取所有用户
      * <p>
      * Logical.AND，代表权限列表中的所有权限都要满足
-     *
-     * GetMapping == GetMapping("") ==> GetMapping("/")
+     * <p>
+     * GetMapping == GetMapping("") --> GetMapping("/")
      */
     @GetMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
-    public Map<String, Object> user() {
+    public ResponseBean user() {
         List<UserDto> userDtos = userService.selectAll();
 
-        Map<String, Object> map = new HashMap<>(16);
+        if (userDtos == null || userDtos.size() <= 0) {
+            throw new CustomException("search success");
+        }
 
-        map.put("code", "200");
-        map.put("data", userDtos);
-
-        return map;
+        return new ResponseBean(200, "search success", userDtos);
     }
 
     /**
@@ -58,15 +56,14 @@ public class UserController {
      */
     @GetMapping("/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
-    public Map<String, Object> findById(@PathVariable("id") Integer id) {
+    public ResponseBean findById(@PathVariable("id") Integer id) {
         UserDto userDto = userService.selectByPrimaryKey(id);
 
-        Map<String, Object> map = new HashMap<>(16);
+        if (userDto == null) {
+            throw new CustomException("search fail");
+        }
 
-        map.put("code", "200");
-        map.put("data", userDto);
-
-        return map;
+        return new ResponseBean(200, "search success", userDto);
     }
 
     /**
@@ -80,7 +77,15 @@ public class UserController {
      */
     @PostMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String, Object> add(UserDto userDto) {
+    public ResponseBean add(UserDto userDto) {
+//        判断当前账号是否存在
+        UserDto userDtoTemp = new UserDto();
+        userDtoTemp.setAccount(userDto.getAccount());
+
+        if (userService.selectOne(userDtoTemp) != null) {
+            throw new CustomException("account already exists");
+        }
+
         userDto.setRegTime(new Date());
 
 //        密码以帐号 + 密码的形式进行AES加密
@@ -89,13 +94,11 @@ public class UserController {
 
         int count = userService.insert(userDto);
 
-        Map<String, Object> map = new HashMap<>(16);
+        if (count <= 0) {
+            throw new CustomException("add fail");
+        }
 
-        map.put("code", "200");
-        map.put("count", count);
-        map.put("data", userDto);
-
-        return map;
+        return new ResponseBean(200, "add success", userDto);
     }
 
     /**
@@ -103,20 +106,25 @@ public class UserController {
      */
     @PutMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String, Object> update(UserDto userDto) {
+    public ResponseBean update(UserDto userDto) {
+//        判断当前账号是否存在
+        UserDto userDtoTemp = new UserDto();
+        userDtoTemp.setAccount(userDto.getAccount());
+        if (userService.selectOne(userDtoTemp) != null) {
+            throw new CustomException("account already exists");
+        }
+
 //        密码以帐号+密码的形式进行AES加密
         String key = EncryptAESUtil.encrypt(userDto.getAccount() + userDto.getPassword());
         userDto.setPassword(key);
 
         int count = userService.updateByPrimaryKeySelective(userDto);
 
-        Map<String, Object> map = new HashMap<>(16);
+        if (count <= 0) {
+            throw new CustomException("update fail");
+        }
 
-        map.put("code", "200");
-        map.put("count", count);
-        map.put("data", userDto);
-
-        return map;
+        return new ResponseBean(200, "update success", userDto);
     }
 
     /**
@@ -124,15 +132,14 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String, Object> delete(@PathVariable("id") Integer id) {
+    public ResponseBean delete(@PathVariable("id") Integer id) {
         int count = userService.deleteByPrimaryKey(id);
 
-        Map<String, Object> map = new HashMap<>(16);
+        if (count <= 0) {
+            throw new CustomException("delete fail, id is not exists");
+        }
 
-        map.put("code", "200");
-        map.put("count", count);
-
-        return map;
+        return new ResponseBean(200, "delete success", null);
     }
 
     /**
