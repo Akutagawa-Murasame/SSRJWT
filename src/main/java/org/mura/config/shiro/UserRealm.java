@@ -15,6 +15,7 @@ import org.mura.mapper.UserMapper;
 import org.mura.model.PermissionDto;
 import org.mura.model.RoleDto;
 import org.mura.model.UserDto;
+import org.mura.util.EncryptAESUtil;
 import org.mura.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -98,7 +99,12 @@ public class UserRealm extends AuthorizingRealm {
             throw new AuthenticationException("User didn't exists");
         }
 
-        if (!JWTUtil.verify(token, userDto.getPassword())) {
+//        AES对称解密
+        String key = EncryptAESUtil.Decryptor(userDto.getPassword());
+
+//        获取的密码是account+password，所以还需要进行字符串截断
+        assert key != null;
+        if (!JWTUtil.verify(token, key.substring(account.length()))) {
             throw new AuthenticationException("Username or password error");
         }
 

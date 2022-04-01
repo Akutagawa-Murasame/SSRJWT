@@ -105,7 +105,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `account` varchar(20) DEFAULT NULL COMMENT '帐号',
-  `password` varchar(20) DEFAULT NULL COMMENT '密码',
+  `password` varchar(80) DEFAULT NULL COMMENT '密码',
   `username` varchar(20) DEFAULT NULL COMMENT '昵称',
   `reg_time` datetime NOT NULL COMMENT '注册时间',
   PRIMARY KEY (`id`)
@@ -118,7 +118,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`id`, `account`, `password`, `username`, `reg_time`) VALUES (1,'admin','admin','admin','2022-03-28 14:50:26'),(2,'akutagawa','akutagawa','akutagawa','2022-03-28 14:50:27'),(3,'guest','guest','guest','2022-03-28 14:50:27');
+INSERT INTO `user` (`id`, `account`, `password`, `username`, `reg_time`) VALUES (1,'admin','QUJBNUYyM0M3OTNEN0I4MUFBOTZBOTkwOEI1NDI0MUE=','admin','2022-03-31 21:48:20'),(2,'someone','MDQyMjE1NUREQzhCNUFBMzJCMDM5N0ZGNjMwRkMxQkM=','someone','2022-03-31 21:48:20'),(3,'guest','QTNCMzMwREY3MkMwQjRGQjNBQzUyOTM0NTFFMzJCNDg=','guest','2022-03-31 21:48:20');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -160,4 +160,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-29 12:00:36
+-- Dump completed on 2022-04-01  9:05:12

@@ -9,6 +9,7 @@ import org.mura.exception.UnauthorizedException;
 import org.mura.model.UserDto;
 import org.mura.model.common.ResponseBean;
 import org.mura.service.IUserService;
+import org.mura.util.EncryptAESUtil;
 import org.mura.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,12 +35,12 @@ public class UserController {
 
     /**
      * 获取所有用户
-     *
+     * <p>
      * Logical.AND，代表权限列表中的所有权限都要满足
      */
     @GetMapping("/user")
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
-    public Map<String,Object> user(){
+    public Map<String, Object> user() {
         List<UserDto> userDtos = userService.selectAll();
 
         Map<String, Object> map = new HashMap<>(16);
@@ -55,7 +56,7 @@ public class UserController {
      */
     @GetMapping("/user/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
-    public Map<String,Object> findById(@PathVariable("id") Integer id){
+    public Map<String, Object> findById(@PathVariable("id") Integer id) {
         UserDto userDto = userService.selectByPrimaryKey(id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -68,15 +69,21 @@ public class UserController {
 
     /**
      * 增加用户
-     *
+     * <p>
      * 在上传文件的时候，spring框架会自动装配文件类型, 使用@RequestBody接收对象，
      * 所对应的content-type :application/json。所以当使用@RequestBody和文件上传的时候，会报错
      * 所以可以删掉这个注解，或者前端调用接口带上Content-type:application/json，或者使用RequestParam注解
+     * <p>
+     * 现在新增user但是没有新增权限
      */
     @PostMapping("/user")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> add(UserDto userDto){
+    public Map<String, Object> add(UserDto userDto) {
         userDto.setRegTime(new Date());
+
+//        密码以帐号 + 密码的形式进行AES加密
+        String key = EncryptAESUtil.Encryptor(userDto.getAccount() + userDto.getPassword());
+        userDto.setPassword(key);
 
         int count = userService.insert(userDto);
 
@@ -94,7 +101,11 @@ public class UserController {
      */
     @PutMapping("/user")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> update(UserDto userDto){
+    public Map<String, Object> update(UserDto userDto) {
+//        密码以帐号+密码的形式进行AES加密
+        String key = EncryptAESUtil.Encryptor(userDto.getAccount() + userDto.getPassword());
+        userDto.setPassword(key);
+
         int count = userService.updateByPrimaryKeySelective(userDto);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -111,7 +122,7 @@ public class UserController {
      */
     @DeleteMapping("/user/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> delete(@PathVariable("id") Integer id){
+    public Map<String, Object> delete(@PathVariable("id") Integer id) {
         int count = userService.deleteByPrimaryKey(id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -132,7 +143,12 @@ public class UserController {
         userDtoTemp.setAccount(userDto.getAccount());
         userDtoTemp = userService.selectOne(userDtoTemp);
 
-        if (userDtoTemp.getPassword().equals(userDto.getPassword())) {
+        // 进行AES解密
+        String key = EncryptAESUtil.Decryptor(userDtoTemp.getPassword());
+
+//        对比，因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
+        assert key != null;
+        if (key.equals(userDto.getAccount() + userDto.getPassword())) {
 //            ResponseBean中携带了token
             return new ResponseBean(200, "Login success", JWTUtil.sign(userDto.getAccount(), userDto.getPassword()));
         } else {
@@ -156,7 +172,7 @@ public class UserController {
 
     /**
      * `@RequiresAuthentication等价于subject.isAuthenticated()返回true
-     *
+     * <p>
      * 没登陆会报错
      */
     @GetMapping("/user/article2")

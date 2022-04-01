@@ -71,6 +71,7 @@ public class JWTUtil {
         Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
 
         Algorithm algorithm = Algorithm.HMAC256(secret);
+
         // 附带account信息
         return JWT.create()
                 .withClaim("account", account)

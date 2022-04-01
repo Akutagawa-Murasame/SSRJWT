@@ -17,13 +17,7 @@ public class JsonListUtil {
      * JSON to Entity
      */
     public static <T> T jsonToObject(String entityJson, Class<T> targetType) {
-        try {
-            return JSONObject.parseObject(entityJson, targetType);
-        } catch (Exception e) {
-            log.error("JSON转{}失败", targetType.toString());
-        }
-
-        return null;
+        return JSONObject.parseObject(entityJson, targetType);
     }
 
     /**
