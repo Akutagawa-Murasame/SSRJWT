@@ -18,7 +18,7 @@ public class JWTUtil {
      * 校验token是否正确
      *
      * @param token  令牌
-     * @param secret 秘钥(这里秘钥都是取密码加Redis中保留的随机UUID)
+     * @param secret 秘钥
      * @return 是否正确
      *
      * claim是jwt中的附加声明，即使不验证也没事，如果使用了withClaim就需要验证
@@ -31,7 +31,7 @@ public class JWTUtil {
                     .build();
 
 //            验证失败会报错，过期也会报错
-            DecodedJWT jwt = verifier.verify(token);
+            verifier.verify(token);
 
             return true;
         } catch (Exception e) {
@@ -64,14 +64,16 @@ public class JWTUtil {
      * 生成签名, EXPIRE_TIME后过期
      *
      * @param account 账号
-     * @param secret   用户的密码
+     * @param secret 私钥
      * @return 加密的token
      */
     public static String sign(String account, String secret) {
 //        获取过期时间，读取配置文件
         PropertiesUtil.readProperties("config.properties");
         String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
-        Date date = new Date(System.currentTimeMillis() + Long.parseLong(tokenExpireTime));
+
+//        此处单位是毫秒，所以要*1000
+        Date date = new Date(System.currentTimeMillis() + Long.parseLong(tokenExpireTime) * 1000);
 
         Algorithm algorithm = Algorithm.HMAC256(secret);
 

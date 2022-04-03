@@ -5,11 +5,14 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.mura.config.redis.JedisUtil;
 import org.mura.exception.CustomException;
 import org.mura.exception.UnauthorizedException;
 import org.mura.model.UserDto;
+import org.mura.model.common.Constant;
 import org.mura.model.common.ResponseBean;
 import org.mura.service.IUserService;
+import org.mura.util.PropertiesUtil;
 import org.mura.util.encrypt.EncryptAESUtil;
 import org.mura.config.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,10 +160,17 @@ public class UserController {
 
 //        对比，因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
         if (key.equals(userDto.getAccount() + userDto.getPassword())) {
+//             获取Token过期时间，读取配置文件
+            PropertiesUtil.readProperties("config.properties");
+            String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
+
+//             设置Redis中的Token
+            JedisUtil.setObject(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount(), key, Integer.parseInt(tokenExpireTime));
+
 //            ResponseBean中携带了token
-            return new ResponseBean(200, "Login success", JWTUtil.sign(userDto.getAccount(), userDto.getPassword()));
+            return new ResponseBean(200, "Login Success", JWTUtil.sign(userDto.getAccount(), key));
         } else {
-            throw new UnauthorizedException("username or password error");
+            throw new UnauthorizedException("account or password error");
         }
     }
 

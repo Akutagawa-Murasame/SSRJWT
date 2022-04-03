@@ -10,12 +10,14 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.mura.config.jwt.JWTToken;
+import org.mura.config.redis.JedisUtil;
 import org.mura.mapper.PermissionMapper;
 import org.mura.mapper.RoleMapper;
 import org.mura.mapper.UserMapper;
 import org.mura.model.PermissionDto;
 import org.mura.model.RoleDto;
 import org.mura.model.UserDto;
+import org.mura.model.common.Constant;
 import org.mura.util.encrypt.EncryptAESUtil;
 import org.mura.config.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,9 +105,11 @@ public class UserRealm extends AuthorizingRealm {
 //        AES对称解密
         String key = EncryptAESUtil.decrypt(userDto.getPassword());
 
-//        获取的密码是account+password，所以还需要进行字符串截断
-        if (!JWTUtil.verify(token, key.substring(account.length()))) {
-            throw new AuthenticationException("Username or password error");
+//        获取的密码是account+password
+//        缓存过期则认证失败
+        if (!JWTUtil.verify(token, key) ||
+                Boolean.FALSE.equals(JedisUtil.exists(Constant.PREFIX_SHIRO_ACCESS + account))) {
+            throw new AuthenticationException("Username or password error or cache expired");
         }
 
         return new SimpleAuthenticationInfo(token, token, "userRealm");

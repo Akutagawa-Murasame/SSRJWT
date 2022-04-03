@@ -3,7 +3,9 @@ package org.mura.config.shiro.cache;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.mura.config.jwt.JWTUtil;
-import org.mura.util.JedisUtil;
+import org.mura.config.redis.JedisUtil;
+import org.mura.model.common.Constant;
+import org.mura.util.PropertiesUtil;
 import org.mura.util.convert.SerializeUtil;
 
 import java.util.*;
@@ -11,6 +13,8 @@ import java.util.*;
 /**
  * @author Akutagawa Murasame
  * @date 2022/4/3 8:21
+ *
+ * 调用JedisUtil进行redis操作
  */
 @SuppressWarnings("unchecked")
 public class CustomCache<K, V> implements Cache<K, V> {
@@ -19,8 +23,7 @@ public class CustomCache<K, V> implements Cache<K, V> {
      * 传入参数的时候不用带上前缀
      */
     private String getKey(K key) {
-        String KEY_PREFIX = "shiro_cache:";
-        return KEY_PREFIX + JWTUtil.getAccount(key.toString());
+        return Constant.PREFIX_SHIRO_CACHE + JWTUtil.getAccount(key.toString());
     }
 
     /**
@@ -36,9 +39,11 @@ public class CustomCache<K, V> implements Cache<K, V> {
      */
     @Override
     public V put(K key, V value) throws CacheException {
-        JedisUtil.setObject(this.getKey(key), value, JedisUtil.EXPIRE_MINUTE);
+        PropertiesUtil.readProperties("config.properties");
+        String shiroCacheExpireTime = PropertiesUtil.getProperty("shiroCacheExpireTime");
 
-        return (V) JedisUtil.getObject(this.getKey(key));
+        // 设置shiro的redis过期时间
+        return (V) JedisUtil.setObject(this.getKey(key), value, Integer.parseInt(shiroCacheExpireTime));
     }
 
     /**
@@ -46,10 +51,9 @@ public class CustomCache<K, V> implements Cache<K, V> {
      */
     @Override
     public V remove(K key) throws CacheException {
-        Object object = JedisUtil.getObject(this.getKey(key));
         JedisUtil.delKey(this.getKey(key));
 
-        return (V) object;
+        return null;
     }
 
     /**
