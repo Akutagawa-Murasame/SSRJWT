@@ -6,6 +6,8 @@ import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.mura.config.jwt.JWTFilter;
+import org.mura.config.shiro.cache.CustomCacheManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +24,7 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
     /**
-     * 创造一个SecurityManager，这个manager使用自定义的realm，并且不使用shiro自带的session
+     * 创造一个SecurityManager，这个manager使用自定义的realm，并且不使用shiro自带的session，为的是进行无状态校验
      */
     @Bean("securityManager")
     public DefaultWebSecurityManager getManager(UserRealm realm) {
@@ -39,6 +41,9 @@ public class ShiroConfig {
         defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
         manager.setSubjectDAO(subjectDAO);
+
+//        自定义缓存
+        manager.setCacheManager(new CustomCacheManager());
 
         return manager;
     }

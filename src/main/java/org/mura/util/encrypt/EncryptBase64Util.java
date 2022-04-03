@@ -1,4 +1,4 @@
-package org.mura.util;
+package org.mura.util.encrypt;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;

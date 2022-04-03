@@ -9,14 +9,15 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.mura.config.jwt.JWTToken;
 import org.mura.mapper.PermissionMapper;
 import org.mura.mapper.RoleMapper;
 import org.mura.mapper.UserMapper;
 import org.mura.model.PermissionDto;
 import org.mura.model.RoleDto;
 import org.mura.model.UserDto;
-import org.mura.util.EncryptAESUtil;
-import org.mura.util.JWTUtil;
+import org.mura.util.encrypt.EncryptAESUtil;
+import org.mura.config.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -87,7 +88,7 @@ public class UserRealm extends AuthorizingRealm {
         String account = JWTUtil.getAccount(token);
 
         if (null == account) {
-            throw new AuthenticationException("token account is null");
+            throw new AuthenticationException("account in token is null");
         }
 
         // 查询用户是否存在
@@ -96,7 +97,7 @@ public class UserRealm extends AuthorizingRealm {
         userDto = userMapper.selectOne(userDto);
 
         if (null == userDto) {
-            throw new AuthenticationException("User didn't exists");
+            throw new AuthenticationException("account didn't exists");
         }
 
 //        AES对称解密

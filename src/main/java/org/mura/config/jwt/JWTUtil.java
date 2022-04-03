@@ -1,10 +1,11 @@
-package org.mura.util;
+package org.mura.config.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.mura.util.PropertiesUtil;
 
 import java.util.Date;
 
@@ -13,11 +14,6 @@ import java.util.Date;
  * @date 2022/3/28 21:20
  */
 public class JWTUtil {
-    /**
-     * 过期时间5分钟
-     */
-    private static final long EXPIRE_TIME = 5 * 60 * 1000;
-
     /**
      * 校验token是否正确
      *
@@ -39,8 +35,10 @@ public class JWTUtil {
 
             return true;
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
         }
+
+        return false;
     }
 
     /**
@@ -56,8 +54,10 @@ public class JWTUtil {
 
             return jwt.getClaim("account").asString();
         } catch (JWTDecodeException e) {
-            return null;
+            e.printStackTrace();
         }
+
+        return null;
     }
 
     /**
@@ -68,7 +68,10 @@ public class JWTUtil {
      * @return 加密的token
      */
     public static String sign(String account, String secret) {
-        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+//        获取过期时间，读取配置文件
+        PropertiesUtil.readProperties("config.properties");
+        String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
+        Date date = new Date(System.currentTimeMillis() + Long.parseLong(tokenExpireTime));
 
         Algorithm algorithm = Algorithm.HMAC256(secret);
 

@@ -1,0 +1,102 @@
+package org.mura.config.shiro.cache;
+
+import org.apache.shiro.cache.Cache;
+import org.apache.shiro.cache.CacheException;
+import org.mura.config.jwt.JWTUtil;
+import org.mura.util.JedisUtil;
+import org.mura.util.convert.SerializeUtil;
+
+import java.util.*;
+
+/**
+ * @author Akutagawa Murasame
+ * @date 2022/4/3 8:21
+ */
+@SuppressWarnings("unchecked")
+public class CustomCache<K, V> implements Cache<K, V> {
+    /**
+     * 缓存的key名称获取为shiro_cache:account
+     * 传入参数的时候不用带上前缀
+     */
+    private String getKey(K key) {
+        String KEY_PREFIX = "shiro_cache:";
+        return KEY_PREFIX + JWTUtil.getAccount(key.toString());
+    }
+
+    /**
+     * 获取缓存
+     */
+    @Override
+    public V get(K key) throws CacheException {
+        return (V) JedisUtil.getObject(this.getKey(key));
+    }
+
+    /**
+     * 保存缓存
+     */
+    @Override
+    public V put(K key, V value) throws CacheException {
+        JedisUtil.setObject(this.getKey(key), value, JedisUtil.EXPIRE_MINUTE);
+
+        return (V) JedisUtil.getObject(this.getKey(key));
+    }
+
+    /**
+     * 移除缓存
+     */
+    @Override
+    public V remove(K key) throws CacheException {
+        Object object = JedisUtil.getObject(this.getKey(key));
+        JedisUtil.delKey(this.getKey(key));
+
+        return (V) object;
+    }
+
+    /**
+     * 清空所有缓存
+     */
+    @Override
+    public void clear() throws CacheException {
+        Objects.requireNonNull(JedisUtil.getJedis()).flushDB();
+    }
+
+    /**
+     * 缓存的个数
+     */
+    @Override
+    public int size() {
+        Long size = Objects.requireNonNull(JedisUtil.getJedis()).dbSize();
+
+        return size.intValue();
+    }
+
+    /**
+     * 获取所有的key
+     */
+    @Override
+    public Set<K> keys() {
+        Set<byte[]> keys = Objects.requireNonNull(JedisUtil.getJedis()).
+                keys("*".getBytes());
+
+        Set<K> set = new HashSet<>();
+        for (byte[] key : keys) {
+            set.add((K) SerializeUtil.unserialize(key));
+        }
+        return set;
+    }
+
+    /**
+     * 获取所有的value
+     */
+    @Override
+    public Collection<V> values() {
+        Set<K> keys = this.keys();
+        List<V> values = new ArrayList<>();
+
+        for (K key : keys) {
+            values.add((V) JedisUtil.getObject(this.getKey(key)));
+        }
+
+        return values;
+    }
+}

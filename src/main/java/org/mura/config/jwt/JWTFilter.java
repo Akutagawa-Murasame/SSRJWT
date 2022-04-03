@@ -1,4 +1,4 @@
-package org.mura.config.shiro;
+package org.mura.config.jwt;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;

@@ -29,13 +29,23 @@ public class PropertiesUtil {
      * for '.' ('\u002e')
      */
     public static void readProperties(String fileName){
+        InputStream inputStream = null;
+
         try {
-            InputStream inputStream = PropertiesUtil.class.getResourceAsStream("/" + fileName);
+            inputStream = PropertiesUtil.class.getResourceAsStream("/" + fileName);
             assert inputStream != null;
             BufferedReader bf = new BufferedReader(new InputStreamReader(inputStream));
             PROPERTIES.load(bf);
         } catch (IOException e){
             e.printStackTrace();
+        } finally {
+            try{
+                if(inputStream != null){
+                    inputStream.close();
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
     }
 

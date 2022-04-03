@@ -2,7 +2,6 @@ package org.mura.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,20 +12,6 @@ import java.util.List;
  */
 @Slf4j
 public class JsonListUtil {
-    /**
-     * JSON to Entity
-     */
-    public static <T> T jsonToObject(String entityJson, Class<T> targetType) {
-        return JSONObject.parseObject(entityJson, targetType);
-    }
-
-    /**
-     * Entity to JSON
-     */
-    public static <T> String objectToJson(T target) {
-        return JSONObject.toJSONString(target);
-    }
-
     /**
      * List to json
      */

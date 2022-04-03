@@ -10,8 +10,8 @@ import org.mura.exception.UnauthorizedException;
 import org.mura.model.UserDto;
 import org.mura.model.common.ResponseBean;
 import org.mura.service.IUserService;
-import org.mura.util.EncryptAESUtil;
-import org.mura.util.JWTUtil;
+import org.mura.util.encrypt.EncryptAESUtil;
+import org.mura.config.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
