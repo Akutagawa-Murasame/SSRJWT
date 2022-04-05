@@ -49,11 +49,13 @@ public class ExceptionController {
      * @param request 异常转发请求
      * @param e 异常
      * @return 响应状态bean
+     *
+     * 410：资源已被永久删除状态码
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomException.class)
     public ResponseBean handle(HttpServletRequest request, CustomException e) {
-        return new ResponseBean(this.getStatus(request).value(), e.getMessage(), null);
+        return new ResponseBean(410, e.getMessage(), null);
     }
 
     /**

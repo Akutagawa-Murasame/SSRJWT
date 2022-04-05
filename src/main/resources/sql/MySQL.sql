@@ -119,7 +119,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`id`, `account`, `password`, `username`, `reg_time`) VALUES (1,'admin','QUJBNUYyM0M3OTNEN0I4MUFBOTZBOTkwOEI1NDI0MUE=','admin','2022-04-01 14:21:52'),(2,'someone','MDQyMjE1NUREQzhCNUFBMzJCMDM5N0ZGNjMwRkMxQkM=','someone','2022-04-01 14:21:53'),(3,'guest','QTNCMzMwREY3MkMwQjRGQjNBQzUyOTM0NTFFMzJCNDg=','guest','2022-04-01 14:21:53');
+INSERT INTO `user` (`id`, `account`, `password`, `username`, `reg_time`) VALUES (1,'admin','MUIwMjk5MDczNDUwNEIyOUY3NjRDODVDOTgyMzEwNDk=','admin','2022-04-01 14:21:52'),(2,'someone','QTA4RTI5Q0JDQ0FCQkVCRUEzMEUyNkM3REFGQkI5NDY=','someone','2022-04-01 14:21:53'),(3,'guest','RkRFRDIwNTE2NjQzRUU3NzcyNjM1RDgwRkU2QzU1OUM=','guest','2022-04-01 14:21:53');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,4 +161,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-01 14:24:30
+-- Dump completed on 2022-04-05 13:47:34

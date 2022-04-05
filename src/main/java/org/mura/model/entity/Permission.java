@@ -1,9 +1,15 @@
 package org.mura.model.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
+/**
+ * @author Akutagawa Murasame
+ */
 @Table(name = "permission")
-public class Permission {
+public class Permission implements Serializable {
+    private static final long serialVersionUID = -3480143716531511469L;
+
     /**
      * ID
      */

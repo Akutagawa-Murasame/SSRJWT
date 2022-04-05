@@ -1,5 +1,6 @@
 package org.mura.config.shiro.cache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.mura.config.jwt.JWTUtil;
@@ -17,6 +18,7 @@ import java.util.*;
  * 调用JedisUtil进行redis操作
  */
 @SuppressWarnings("unchecked")
+@Slf4j
 public class CustomCache<K, V> implements Cache<K, V> {
     /**
      * 缓存的key名称获取为shiro_cache:account
@@ -31,16 +33,19 @@ public class CustomCache<K, V> implements Cache<K, V> {
      */
     @Override
     public V get(K key) throws CacheException {
+        log.info("get data from redis");
         return (V) JedisUtil.getObject(this.getKey(key));
     }
 
     /**
-     * 保存缓存
+     * 保存缓存，当从缓存中获取数据的时候会调用这个函数，所以在redis中会看到以shiro:cache:开头的键
      */
     @Override
     public V put(K key, V value) throws CacheException {
         PropertiesUtil.readProperties("config.properties");
         String shiroCacheExpireTime = PropertiesUtil.getProperty("shiroCacheExpireTime");
+
+        log.info("cache data:" + value.toString() + "for expire:" + shiroCacheExpireTime + "s");
 
         // 设置shiro的redis过期时间
         return (V) JedisUtil.setObject(this.getKey(key), value, Integer.parseInt(shiroCacheExpireTime));

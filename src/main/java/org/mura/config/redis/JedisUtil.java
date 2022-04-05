@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.util.Set;
+
 /**
  * @author Akutagawa Murasame
  * @date 2022/4/3 9:50
@@ -182,6 +184,32 @@ public class JedisUtil {
             return jedis.exists(key.getBytes());
         } catch (Exception e) {
             log.error("search key exception:" + key + "cause:" + e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * 模糊查询获取key集合（字符串），用于获取在线用户信息
+     */
+    public static Set<String> keysS(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.keys(key);
+        } catch (Exception e) {
+            log.error("模糊查询key值:" + key + "异常:" + e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * 模糊查询获取key集合（字节），用于获取在线用户信息
+     */
+    public static Set<byte[]> keysB(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.keys(key.getBytes());
+        } catch (Exception e) {
+            log.error("模糊查询key值:" + key + "异常:" + e.getMessage());
         }
 
         return null;

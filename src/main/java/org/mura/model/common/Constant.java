@@ -25,25 +25,25 @@ public class Constant {
     /**
      * redis过期时间，以秒为单位，一分钟
      */
-    public final static int EXRP_MINUTE = 60;
+    public final static int EXRPIRE_MINUTE = 60;
 
     /**
      * redis过期时间，以秒为单位，一小时
      */
-    public final static int EXRP_HOUR = 60 * 60;
+    public final static int EXPIRE_HOUR = 60 * 60;
 
     /**
      * redis过期时间，以秒为单位，一天
      */
-    public final static int EXRP_DAY = 60 * 60 * 24;
+    public final static int EXPIRE_DAY = 60 * 60 * 24;
 
     /**
-     * 缓存的key名称缓存前缀
+     * 缓存的登录对象前缀，过期后会出现这个
      */
     public final static String PREFIX_SHIRO_CACHE = "shiro:cache:";
 
     /**
-     * 缓存的key名称访问前缀
+     * 缓存的token访问前缀
      */
     public final static String PREFIX_SHIRO_ACCESS = "shiro:access_token:";
 
