@@ -3,9 +3,9 @@ spring:
     active: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql:///ssrjwt?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    username: test
-    password: test
+    url: jdbc:mysql://10.184.206.69:3306/ssrjwt?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
     type: com.alibaba.druid.pool.DruidDataSource
 server:
   port: 8080

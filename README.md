@@ -3,10 +3,11 @@
 ---
 
 环境搭建：
-- 1、执行sql/MySQL.sql脚本
-- 2、配置application.yml
-- 3、在redisUtil中配置redis连接地址
-- 3、运行springboot项目即可
+- 1、设置项目的Java版本为1.8[为什么](#jump)
+- 2、执行sql/MySQL.sql脚本
+- 3、配置application.yml
+- 4、在redisUtil中配置redis连接地址
+- 5、运行springboot项目即可
 
 ---
 
@@ -27,3 +28,6 @@ AES是对称加密算法，如果想实现非对称请使用shiro的MD5摘要算
 
 ---
 
+部分用户出现com.sun.crypto.provider.SunJCE找不到的错误，这是因为高版本jdk库中没有SunJCE的jar包，这个时候请将项目使用的Java版本设置为Java8
+[IDEA设置Java版本](https://blog.csdn.net/baidu_27395805/article/details/88376132)
+<span id="jump">a</span>
