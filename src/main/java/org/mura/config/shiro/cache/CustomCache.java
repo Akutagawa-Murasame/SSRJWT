@@ -3,11 +3,11 @@ package org.mura.config.shiro.cache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
-import org.mura.config.jwt.JWTUtil;
-import org.mura.config.redis.JedisUtil;
+import org.mura.util.JWTUtil;
+import org.mura.util.JedisUtil;
 import org.mura.model.common.Constant;
-import org.mura.util.PropertiesUtil;
-import org.mura.util.convert.SerializeUtil;
+import org.mura.util.common.PropertiesUtil;
+import org.mura.util.common.SerializeUtil;
 
 import java.util.*;
 
@@ -38,7 +38,7 @@ public class CustomCache<K, V> implements Cache<K, V> {
     }
 
     /**
-     * 保存缓存，当从缓存中获取数据的时候会调用这个函数，所以在redis中会看到以shiro:cache:开头的键
+     * 保存缓存，当获取数据的时候会调用这个函数缓存数据，所以在redis中会看到以shiro:cache:开头的键
      */
     @Override
     public V put(K key, V value) throws CacheException {

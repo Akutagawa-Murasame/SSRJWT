@@ -1,4 +1,4 @@
-package org.mura.util;
+package org.mura.util.common;
 
 /**
  * @author Akutagawa Murasame

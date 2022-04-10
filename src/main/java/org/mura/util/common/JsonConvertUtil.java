@@ -1,4 +1,4 @@
-package org.mura.util.convert;
+package org.mura.util.common;
 
 import com.alibaba.fastjson.JSONObject;
 

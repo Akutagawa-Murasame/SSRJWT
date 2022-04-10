@@ -1,9 +1,9 @@
-package org.mura.config.redis;
+package org.mura.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.mura.model.common.Constant;
-import org.mura.util.StringUtil;
-import org.mura.util.convert.SerializeUtil;
+import org.mura.util.common.StringUtil;
+import org.mura.util.common.SerializeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;

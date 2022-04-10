@@ -1,20 +1,21 @@
 package org.mura.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
-import org.mura.config.redis.JedisUtil;
+import org.mura.util.JedisUtil;
 import org.mura.exception.CustomException;
 import org.mura.exception.UnauthorizedException;
 import org.mura.model.UserDto;
 import org.mura.model.common.Constant;
 import org.mura.model.common.ResponseBean;
 import org.mura.service.IUserService;
-import org.mura.util.PropertiesUtil;
-import org.mura.util.encrypt.EncryptAESUtil;
-import org.mura.config.jwt.JWTUtil;
+import org.mura.util.common.PropertiesUtil;
+import org.mura.util.EncryptAESUtil;
+import org.mura.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -112,14 +113,18 @@ public class UserController {
 //        判断当前账号是否存在
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
-
-        if (userService.selectOne(userDtoTemp) != null) {
+        userDtoTemp = userService.selectOne(userDtoTemp);
+        if (userDtoTemp != null && StringUtils.isNotBlank(userDtoTemp.getPassword())) {
             throw new CustomException("account already exists");
         }
 
         userDto.setRegTime(new Date());
 
 //        密码以帐号 + 密码的形式进行AES加密
+        if (userDto.getPassword().length() > 8) {
+            throw new CustomException("maximum size of password is 8");
+        }
+
         String key = EncryptAESUtil.encrypt(userDto.getAccount() + userDto.getPassword());
         userDto.setPassword(key);
 
@@ -138,16 +143,19 @@ public class UserController {
     @PutMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
     public ResponseBean update(UserDto userDto) {
-//        判断当前账号是否存在
+//        查询密码，如果密码没有更改就不用进行数据库的密码字段更新
         UserDto userDtoTemp = new UserDto();
-        userDtoTemp.setAccount(userDto.getAccount());
-        if (userService.selectOne(userDtoTemp) == null) {
-            throw new CustomException("account don't exists");
-        }
+        userDtoTemp.setId(userDto.getId());
+        userDtoTemp = userService.selectOne(userDtoTemp);
 
-//        密码以帐号+密码的形式进行AES加密
-        String key = EncryptAESUtil.encrypt(userDto.getAccount() + userDto.getPassword());
-        userDto.setPassword(key);
+        if (!userDtoTemp.getPassword().equals(userDto.getPassword())) {
+            if (userDto.getPassword().length() > 8) {
+                throw new CustomException("maximum size of password is 8");
+            }
+
+            String key = EncryptAESUtil.encrypt(userDto.getAccount() + userDto.getPassword());
+            userDto.setPassword(key);
+        }
 
         int count = userService.updateByPrimaryKeySelective(userDto);
 

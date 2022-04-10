@@ -1,4 +1,4 @@
-package org.mura.util.encrypt;
+package org.mura.util.common;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -10,7 +10,7 @@ import java.util.Base64;
  *
  * Base64对称加密算法
  */
-public class EncryptBase64Util {
+public class Base64ConvertUtil {
     /**
      * 加密
      */

@@ -1,10 +1,11 @@
-package org.mura.util.encrypt;
+package org.mura.util;
 
 import com.sun.crypto.provider.SunJCE;
 import lombok.extern.slf4j.Slf4j;
 import org.mura.exception.UnauthorizedException;
-import org.mura.util.convert.HexConvertUtil;
-import org.mura.util.PropertiesUtil;
+import org.mura.util.common.Base64ConvertUtil;
+import org.mura.util.common.HexConvertUtil;
+import org.mura.util.common.PropertiesUtil;
 
 import javax.crypto.*;
 import java.io.UnsupportedEncodingException;
@@ -35,7 +36,7 @@ public class EncryptAESUtil {
         // 读取配置文件，获取私钥
         PropertiesUtil.readProperties("config.properties");
 
-        String key = EncryptBase64Util.decode(PropertiesUtil.getProperty("encryptAESKey"));
+        String key = Base64ConvertUtil.decode(PropertiesUtil.getProperty("encryptAESKey"));
 
         // 将key进行转换为byte[]数组
         keygen.init(128, new SecureRandom(key.getBytes()));
@@ -61,7 +62,7 @@ public class EncryptAESUtil {
             byte[] cipherByte = cipher.doFinal(str.getBytes());
 
             // 先将二进制转换成16进制，再返回Base64加密后的String
-            return EncryptBase64Util.encode(HexConvertUtil.parseByteToHexStr(cipherByte));
+            return Base64ConvertUtil.encode(HexConvertUtil.parseByteToHexStr(cipherByte));
         } catch (NoSuchAlgorithmException |
                 BadPaddingException |
                 IllegalBlockSizeException |
@@ -89,7 +90,7 @@ public class EncryptAESUtil {
             // 该字节数组负责保存加密的结果，先对str进行Base64解密，将16进制转换为二进制
             byte[] cipherByte = cipher.doFinal(
                     Objects.requireNonNull(
-                            HexConvertUtil.parseHexStrToByte(EncryptBase64Util.decode(str))
+                            HexConvertUtil.parseHexStrToByte(Base64ConvertUtil.decode(str))
                     ));
 
             return new String(cipherByte);
